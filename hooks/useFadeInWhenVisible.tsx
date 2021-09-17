@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer'
 
 export function useFadeInWhenVisible() {
   const animate = useAnimation()
-  const [ref, inView] = useInView()
+  const [ref, inView] = useInView({ triggerOnce: true })
 
   useEffect(() => {
     if (inView) {
