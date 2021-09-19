@@ -1,19 +1,52 @@
-import { motion } from 'framer-motion'
+import { AnimateSharedLayout, motion } from 'framer-motion'
 import { useFadeInWhenVisible, useModal } from 'hooks'
 import { Collapsible } from 'components'
-import { useState } from 'react'
+
+function CustomLink({ children, href }: { children: string; href: string }) {
+  return (
+    <a
+      className="underline hover:bg-black hover:text-white hover:no-underline"
+      href={href}
+      target="_blank"
+    >
+      {children}
+    </a>
+  )
+}
+
+function CustomButton({
+  children,
+  onClick,
+  div = false,
+}: {
+  children: string
+  onClick?(): void
+  div?: boolean
+}) {
+  return div ? (
+    <div className="px-5 py-1 bg-white border border-black rounded-full flex justify-center items-center hover:text-white hover:bg-black">
+      {children}
+    </div>
+  ) : (
+    <button
+      className="px-5 py-1 bg-white border border-black rounded-full flex justify-center items-center hover:text-white hover:bg-black"
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  )
+}
 
 export default function Home() {
   const modal = useModal()
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(false)
 
   const openNotification = () =>
     modal.open({
       name: 'Notification',
       label: 'A notification',
       props: {
-        text: "Here's an example of a notification modal",
-        color: 'green-600',
+        text: "Here's an example of a notification-style modal 👀",
+        color: 'black',
       },
       position: ['start', 'end'],
     })
@@ -23,7 +56,8 @@ export default function Home() {
       name: 'Confirmation',
       label: 'A confirmation modal',
       props: {
-        prompt: "Here's an example of a modal with a callback. Do you accept?",
+        prompt:
+          "Here's an example of a modal with a callback. Do you accept? 🤔",
         onConfirm: console.log,
       },
       position: ['center', 'center'],
@@ -35,9 +69,7 @@ export default function Home() {
         <h1 className="text-4xl">Welcome to my Next.js boilerplate 🙂</h1>
         <p className="max-w-xl mt-4">
           Common patterns I use when building{' '}
-          <a href="https://nextjs.org/" className="underline" target="_blank">
-            Next.js
-          </a>{' '}
+          <CustomLink href="https://nextjs.org/">Next.js</CustomLink>{' '}
           applications, bundled into a template to save myself some time
           bootstrapping applications and websites.
         </p>
@@ -46,85 +78,66 @@ export default function Home() {
         <h2 className="text-2xl mt-12 mb-4">What's included:</h2>
         <ul className="list-disc pl-4 leading-8">
           <li>
-            <a
-              href="https://tailwindcss.com"
-              target="blank"
-              className="underline"
-            >
-              tailwind-css
-            </a>{' '}
+            <CustomLink href="https://tailwindcss.com">tailwind-css</CustomLink>{' '}
             installed by default, with{' '}
-            <a
-              href="https://tailwindcss.com/docs/plugins#aspect-ratio"
-              target="blank"
-              className="underline"
-            >
+            <CustomLink href="https://tailwindcss.com/docs/plugins#aspect-ratio">
               aspect-ratio plugin
-            </a>{' '}
+            </CustomLink>{' '}
             included
           </li>
           <li>
-            <a
-              className="underline"
-              href="https://www.framer.com/motion/"
-              target="_blank"
-            >
+            <CustomLink href="https://www.framer.com/motion/">
               framer-motion
-            </a>{' '}
+            </CustomLink>{' '}
             installed by default
           </li>
           <li>
             simple tranitions between routes via{' '}
-            <a
-              href="https://www.framer.com/docs/animate-presence/"
-              className="underline"
-              target="_blank"
-            >
+            <CustomLink href="https://www.framer.com/docs/animate-presence/">
               AnimatePresence
-            </a>
+            </CustomLink>
           </li>
           <li>
             App-wide state via{' '}
-            <a
-              className="underline"
-              href="https://reactjs.org/docs/context.html"
-              target="_blank"
-            >
+            <CustomLink href="https://reactjs.org/docs/context.html">
               Context API
-            </a>
+            </CustomLink>
           </li>
           <li>
             Accessible and animatable modals via @reach/dialog
-            <br />(
-            <button className="underline" onClick={openConfirmation}>
-              show example modal 1
-            </button>
-            ,{' '}
-            <button className="underline" onClick={openNotification}>
-              show example modal 2
-            </button>
-            )
+            <div className="flex flex-row gap-3 flex-wrap my-2">
+              <CustomButton onClick={openConfirmation}>
+                show example modal 1
+              </CustomButton>
+              <CustomButton onClick={openNotification}>
+                show example modal 2
+              </CustomButton>
+            </div>
           </li>
-          <li>
-            Accessible and animatable collapsible content via @reach/disclosure
-            <Collapsible
-              open={isCollapsibleOpen}
-              onChange={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
-              title={
-                <span className="underline">
-                  {isCollapsibleOpen ? 'hide' : 'show'} content
-                </span>
-              }
-            >
-              <motion.p
-                animate={{ opacity: 1 }}
-                initial={{ opacity: 0 }}
-                exit={{ opacity: 0 }}
+          <AnimateSharedLayout>
+            <motion.li>
+              Animated accessible collapsing content via{' '}
+              <CustomLink href="https://reach.tech/disclosure/">
+                @reach/disclosure
+              </CustomLink>
+              <Collapsible
+                layout
+                className="my-2"
+                title={isOpen => (
+                  <CustomButton div>
+                    {isOpen ? 'collapse' : 'expand'}
+                  </CustomButton>
+                )}
               >
-                some hidden content!
-              </motion.p>
-            </Collapsible>
-          </li>
+                <p>some hidden content!</p>
+              </Collapsible>
+            </motion.li>
+            <motion.li layout="position">another item</motion.li>
+            <motion.li layout="position">another item</motion.li>
+            <motion.li layout="position">another item</motion.li>
+            <motion.li layout="position">another item</motion.li>
+            <motion.li layout="position">another item</motion.li>
+          </AnimateSharedLayout>
         </ul>
       </motion.section>
     </div>
