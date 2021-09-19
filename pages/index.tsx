@@ -11,7 +11,10 @@ export default function Home() {
     modal.open({
       name: 'Notification',
       label: 'A notification',
-      props: { text: "Here's an example of a notification modal" },
+      props: {
+        text: "Here's an example of a notification modal",
+        color: 'green-600',
+      },
       position: ['start', 'end'],
     })
 
@@ -19,7 +22,10 @@ export default function Home() {
     modal.open({
       name: 'Confirmation',
       label: 'A confirmation modal',
-      props: { prompt: 'Do you accept?', onConfirm: console.log },
+      props: {
+        prompt: "Here's an example of a modal with a callback. Do you accept?",
+        onConfirm: console.log,
+      },
       position: ['center', 'center'],
     })
 
