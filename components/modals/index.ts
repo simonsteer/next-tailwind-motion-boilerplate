@@ -1,1 +1,0 @@
-export { ExampleAlert } from './ExampleAlert'

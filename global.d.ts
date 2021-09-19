@@ -9,7 +9,7 @@ declare module 'classnames' {
       | null
       | false
       | undefined
-      | { [className: string]: string | null | false | undefined }
+      | { [className: string]: string | null | boolean | undefined }
     )[]
   ) => string
 }
