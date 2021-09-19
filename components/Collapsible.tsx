@@ -43,7 +43,11 @@ export function Collapsible(props: CollapsibleProps) {
       : SelfContainedCollapsible
 
   return (
-    <motion.div className={classNames('relative', className)} {...motionProps}>
+    <motion.div
+      layout
+      className={classNames('relative', className)}
+      {...motionProps}
+    >
       <CollapsibleComponent {...disclosureProps} />
     </motion.div>
   )
@@ -128,7 +132,7 @@ function RenderedDisclosure({
       <MotionDisclosureButton layout="position">
         {typeof title === 'function' ? title(internalIsOpen) : title}
       </MotionDisclosureButton>
-      <MotionDisclosurePanel layout="position">
+      <MotionDisclosurePanel>
         <AnimatePresence onExitComplete={handleExitComplete}>
           {internalIsOpen && (
             <motion.div

@@ -10,13 +10,15 @@ First we update the typings and the default state:
 // types/app.ts
 export type AppState = {
   modal: null | Modal
-  count: number
+  count: number // add the new type
 }
+
+...
 
 // hooks/useAppState.ts
 const DEFAULT_APP_STATE: AppState = {
   modal: null,
-  count: 0,
+  count: 0, // set the default value
 }
 ```
 
@@ -98,4 +100,35 @@ const openNotification = () =>
     position: ['start', 'end'],
   })
 ```
-If you look at [types/app.ts](types/app.ts), the `Modal` type is based off of the named exports imported from `components/modals.tsx`. Whatever functional component you wish to use as an alert should be exported from this file so the typings for the methods returned by `useModal` will update automatically.
+If you look at [types/app.ts](types/app.ts), the `Modal` type is based off of the named exports imported from `components/modals`. Whatever functional component you wish to use as an alert should be exported from this file so the typings for the methods returned by `useModal` will update automatically.
+
+## Collapsible Content
+
+The [Collapsible](components/Collapsible.tsx) component can be used to create components with collapsible/expandable content. It is built on top of [@reach/dialog](https://reach.tech/dialog/). You have the choice between controlling the open/close state yourself in a parent component, or letting it control its own state. To control the state of the Collapsible yourself, you must supply it with two props: a boolean value, `open`, and a callback, `onChange`.
+
+```tsx
+// Collapsible in charge of its own state
+function Collapsible1() {
+  return (
+    <Collapsible title={isOpen => <p>{isOpen ? 'close' : 'open'}</p>}>
+      🤖
+    </Collapsible>
+  )
+}
+
+// Collapsible that is having its state controlled externally
+function Collapsible2() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <Collapsible
+      open={isOpen}
+      onChange={() => setIsOpen(!isOpen)}
+      title="click to toggle"
+    >
+      👻
+    </Collapsible>
+  )
+}
+
+```

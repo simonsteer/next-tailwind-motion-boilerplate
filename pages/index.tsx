@@ -121,7 +121,6 @@ export default function Home() {
                 @reach/disclosure
               </CustomLink>
               <Collapsible
-                layout
                 className="my-2"
                 title={isOpen => (
                   <CustomButton div>
@@ -129,7 +128,7 @@ export default function Home() {
                   </CustomButton>
                 )}
               >
-                <p>some hidden content!</p>
+                some hidden content!
               </Collapsible>
             </motion.li>
             <motion.li layout="position">another item</motion.li>
