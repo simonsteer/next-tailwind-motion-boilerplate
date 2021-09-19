@@ -1,9 +1,11 @@
-import Link from 'next/link'
-import { useAppStateContext, useFadeInWhenVisible, useModal } from 'hooks'
 import { motion } from 'framer-motion'
+import { useFadeInWhenVisible, useModal } from 'hooks'
+import { Collapsible } from 'components'
+import { useState } from 'react'
 
 export default function Home() {
   const modal = useModal()
+  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(false)
 
   const openNotification = () =>
     modal.open({
@@ -17,7 +19,7 @@ export default function Home() {
     modal.open({
       name: 'Confirmation',
       label: 'A confirmation modal',
-      props: { prompt: 'Do you accept?' },
+      props: { prompt: 'Do you accept?', onConfirm: console.log },
       position: ['center', 'center'],
     })
 
@@ -86,16 +88,36 @@ export default function Home() {
             </a>
           </li>
           <li>
-            Accessible and animatable alerts via @reach/dialog component
+            Accessible and animatable modals via @reach/dialog
             <br />(
             <button className="underline" onClick={openConfirmation}>
-              example 1
+              show example modal 1
             </button>
             ,{' '}
             <button className="underline" onClick={openNotification}>
-              example 2
+              show example modal 2
             </button>
             )
+          </li>
+          <li>
+            Accessible and animatable collapsible content via @reach/disclosure
+            <Collapsible
+              open={isCollapsibleOpen}
+              onChange={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
+              title={
+                <span className="underline">
+                  {isCollapsibleOpen ? 'hide' : 'show'} content
+                </span>
+              }
+            >
+              <motion.p
+                animate={{ opacity: 1 }}
+                initial={{ opacity: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                some hidden content!
+              </motion.p>
+            </Collapsible>
           </li>
         </ul>
       </motion.section>

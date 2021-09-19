@@ -1,15 +1,19 @@
+import { useUpdateAppState } from 'hooks'
 import { useMemo } from 'react'
 import { Modal } from 'types'
-import { useAppStateContext } from './useAppState'
 
 export function useModal() {
-  const { update } = useAppStateContext()
-  function open(modal: Modal) {
-    update({ modal })
-  }
-  function close() {
-    update({ modal: null })
-  }
+  const update = useUpdateAppState()
 
-  return useMemo(() => ({ open, close }), [update])
+  return useMemo(
+    () => ({
+      open(modal: Modal) {
+        update({ modal })
+      },
+      close() {
+        update({ modal: null })
+      },
+    }),
+    [update]
+  )
 }

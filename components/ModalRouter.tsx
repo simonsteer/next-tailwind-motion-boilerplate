@@ -3,7 +3,7 @@ import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { AnimatePresence } from 'framer-motion'
 import classNames from 'classnames'
 import { Modal, ModalAlignment } from 'types'
-import { useAppStateContext } from 'hooks'
+import { useSelectAppState, useUpdateAppState } from 'hooks'
 import * as MODALS from './modals'
 
 function ModalComponent({ modal }: { modal: Modal }) {
@@ -12,32 +12,36 @@ function ModalComponent({ modal }: { modal: Modal }) {
 }
 
 export function ModalRouter() {
-  const { store, update } = useAppStateContext()
-  const [modal, setModal] = useState(store.modal)
+  const storeModal = useSelectAppState(store => store.modal)
+  const update = useUpdateAppState()
+
+  const [modal, setModal] = useState(storeModal)
   const [position, setPosition] = useState<[ModalAlignment, ModalAlignment]>()
   const [key, setKey] = useState(0)
 
   const updatePosition = () =>
-    setPosition(store.modal?.position || ['center', 'center'])
+    setPosition(storeModal?.position || ['center', 'center'])
   const clearPosition = () => setPosition(undefined)
 
   useEffect(() => {
-    if (store.modal === null) return
+    if (storeModal === null) return
 
     if (!position) updatePosition()
 
     setKey(key + 1)
-    setModal(store.modal)
-  }, [store.modal])
+    setModal(storeModal)
+  }, [storeModal])
 
   function handleExitComplete() {
-    if (store.modal === null) {
+    if (storeModal === null) {
       setModal(null)
       clearPosition()
     } else {
       updatePosition()
     }
   }
+
+  console.log('rendering')
 
   return (
     <DialogOverlay
@@ -53,7 +57,7 @@ export function ModalRouter() {
         className="pointer-events-auto overflow-visible"
       >
         <AnimatePresence exitBeforeEnter onExitComplete={handleExitComplete}>
-          {!!store.modal && <ModalComponent key={key} modal={modal!} />}
+          {!!storeModal && <ModalComponent key={key} modal={modal!} />}
         </AnimatePresence>
       </DialogContent>
     </DialogOverlay>

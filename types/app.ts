@@ -21,6 +21,7 @@ export type Modal = ValueInObject<
 
 export type AppState = {
   modal: null | Modal
+  count: number
 }
 
 export type AppStatePatch =

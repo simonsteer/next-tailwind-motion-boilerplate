@@ -27,7 +27,13 @@ export function Notification({ text }: { text: string }) {
   )
 }
 
-export function Confirmation({ prompt }: { prompt: string }) {
+export function Confirmation({
+  prompt,
+  onConfirm,
+}: {
+  prompt: string
+  onConfirm(result: boolean): void
+}) {
   const { close } = useModal()
 
   return (
@@ -45,13 +51,19 @@ export function Confirmation({ prompt }: { prompt: string }) {
       <div className="w-full flex">
         <button
           className="flex-1 rounded-sm py-1 px-3 hover:bg-white bg-blue-400 border border-blue-400 text-white hover:text-blue-400"
-          onClick={close}
+          onClick={() => {
+            onConfirm(true)
+            close()
+          }}
         >
           yes
         </button>
         <button
           className="ml-4 flex-1 rounded-sm py-1 px-3 hover:bg-white bg-red-400 border border-red-400 text-white hover:text-red-400"
-          onClick={close}
+          onClick={() => {
+            onConfirm(false)
+            close()
+          }}
         >
           no
         </button>
