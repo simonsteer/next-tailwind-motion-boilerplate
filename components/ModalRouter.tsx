@@ -41,8 +41,6 @@ export function ModalRouter() {
     }
   }
 
-  console.log('rendering')
-
   return (
     <DialogOverlay
       className={classNames(
