@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useFadeInWhenVisible, useModal } from 'hooks'
+import { useAppStateContext, useFadeInWhenVisible, useModal } from 'hooks'
 import { motion } from 'framer-motion'
 
 export default function Home() {
@@ -26,11 +26,11 @@ export default function Home() {
       <motion.section {...useFadeInWhenVisible()}>
         <h1 className="text-4xl">Welcome to my Next.js boilerplate 🙂</h1>
         <p className="max-w-xl mt-4">
-          Common patterns I use when building a{' '}
+          Common patterns I use when building{' '}
           <a href="https://nextjs.org/" className="underline" target="_blank">
             Next.js
           </a>{' '}
-          application, bundled into a template to save myself some time
+          applications, bundled into a template to save myself some time
           bootstrapping applications and websites.
         </p>
       </motion.section>
@@ -66,13 +66,13 @@ export default function Home() {
             installed by default
           </li>
           <li>
-            simple tranitions between routes via framer's{' '}
+            simple tranitions between routes via{' '}
             <a
               href="https://www.framer.com/docs/animate-presence/"
               className="underline"
               target="_blank"
             >
-              AnimatedPresence
+              AnimatePresence
             </a>
           </li>
           <li>
