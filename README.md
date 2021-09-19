@@ -1,3 +1,6 @@
+# Next x Tailwind x Framer Boilerplate
+Common patterns I use when building Next.js applications, bundled into a template to save myself some time when bootstrapping applications and websites ⚙️
+
 ## App-wide state
 By default, [the application](pages/_app.tsx) is wrapped with a Context Provider, defined at [hooks/useAppState.tsx](hooks/useAppState.tsx). The default store data that is currently loaded exists solely to handle modals. If you wish to add to the data, update the `AppState` type in [types/app.ts](types/app.ts), then update the `DEFAULT_APP_STATE` constant at the top of [hooks/useAppState.tsx](hooks/useAppState.tsx). To access the data, you can use the `useAppStateContext` hook, which returns an object with two properties; one called `store`, representing the data itself, and another called `update`, which you can use to patch the store. The `update` function is similar to `setState`, except that it accepts deep partial updates to the store instead of needing to be called with an exact copy of the data structure.
 
@@ -36,7 +39,7 @@ export function Counter() {
   const [count, { increment, decrement }] = useCounter()
 
   return (
-    <div className="flex gasp-x-2">
+    <div className="flex gap-x-2">
       <p>{count}</p>
       <button onClick={decrement}>-</button>
       <button onClick={increment}>+</button>
