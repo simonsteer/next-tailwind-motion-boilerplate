@@ -1,6 +1,6 @@
 import { AnimateSharedLayout, motion } from 'framer-motion'
 import { useFadeInWhenVisible, useModal } from 'hooks'
-import { Collapsible } from 'components'
+import { Collapsible, List } from 'components'
 
 function CustomLink({ children, href }: { children: string; href: string }) {
   return (
@@ -37,6 +37,101 @@ function CustomButton({
   )
 }
 
+type Datum = {
+  Link: { type: 'link'; data: { href: string; text: string } }
+  Text: { type: 'text'; data: string }
+  Module: { type: 'module'; data: 'modals' | 'collapsible' }
+}
+
+const DATA: ValueInObject<Datum>[][] = [
+  [
+    {
+      type: 'link',
+      data: { href: 'https://tailwindcss.com', text: 'tailwind-css' },
+    },
+    { type: 'text', data: ' installed by default, with ' },
+    {
+      type: 'link',
+      data: {
+        href: 'https://tailwindcss.com/docs/plugins#aspect-ratio',
+        text: 'aspect-ratio plugin',
+      },
+    },
+    { type: 'text', data: ' plugin included' },
+  ],
+  [
+    {
+      type: 'link',
+      data: { href: 'https://www.framer.com/motion/', text: 'framer-motion' },
+    },
+    { type: 'text', data: ' installed by default' },
+  ],
+  [
+    {
+      type: 'link',
+      data: {
+        href: 'https://github.com/streamich/react-use',
+        text: 'react-use',
+      },
+    },
+    { type: 'text', data: ' installed by default' },
+  ],
+  [
+    { type: 'text', data: 'simple tranitions between routes via ' },
+    {
+      type: 'link',
+      data: {
+        href: 'https://www.framer.com/docs/animate-presence/',
+        text: 'AnimatePresence',
+      },
+    },
+  ],
+  [
+    { type: 'text', data: 'app-wide state via ' },
+    {
+      type: 'link',
+      data: {
+        href: 'https://reactjs.org/docs/context.html',
+        text: 'Context API',
+      },
+    },
+  ],
+  [
+    {
+      type: 'text',
+      data: 'Accessible and animatable collapsing content via ',
+    },
+    {
+      type: 'link',
+      data: {
+        href: 'https://reach.tech/disclosure/',
+        text: '@reach/disclosure',
+      },
+    },
+    {
+      type: 'module',
+      data: 'collapsible',
+    },
+  ],
+  [
+    {
+      type: 'text',
+      data: 'Accessible and animatable modals via ',
+    },
+    {
+      type: 'link',
+      data: {
+        href: 'https://reach.tech/dialog/',
+        text: '@reach/dialog',
+      },
+    },
+    {
+      type: 'module',
+      data: 'modals',
+    },
+  ],
+]
+
 export default function Home() {
   const modal = useModal()
 
@@ -63,6 +158,30 @@ export default function Home() {
       position: ['center', 'center'],
     })
 
+  const collapsible = (
+    <Collapsible
+      className="my-2"
+      title={isOpen => (
+        <CustomButton div>{isOpen ? 'collapse' : 'expand'}</CustomButton>
+      )}
+    >
+      some hidden content!
+    </Collapsible>
+  )
+
+  const modals = (
+    <div className="flex flex-row gap-3 flex-wrap my-2">
+      <CustomButton onClick={openConfirmation}>
+        show example modal 1
+      </CustomButton>
+      <CustomButton onClick={openNotification}>
+        show example modal 2
+      </CustomButton>
+    </div>
+  )
+
+  const modules = { collapsible, modals }
+
   return (
     <div className="max-w-screen-md py-20 px-10">
       <motion.section {...useFadeInWhenVisible()}>
@@ -76,68 +195,28 @@ export default function Home() {
       </motion.section>
       <motion.section {...useFadeInWhenVisible()}>
         <h2 className="text-2xl mt-12 mb-4">What's included:</h2>
-        <ul className="list-disc pl-4 leading-8">
-          <li>
-            <CustomLink href="https://tailwindcss.com">tailwind-css</CustomLink>{' '}
-            installed by default, with{' '}
-            <CustomLink href="https://tailwindcss.com/docs/plugins#aspect-ratio">
-              aspect-ratio plugin
-            </CustomLink>{' '}
-            included
-          </li>
-          <li>
-            <CustomLink href="https://www.framer.com/motion/">
-              framer-motion
-            </CustomLink>{' '}
-            installed by default
-          </li>
-          <li>
-            simple tranitions between routes via{' '}
-            <CustomLink href="https://www.framer.com/docs/animate-presence/">
-              AnimatePresence
-            </CustomLink>
-          </li>
-          <li>
-            App-wide state via{' '}
-            <CustomLink href="https://reactjs.org/docs/context.html">
-              Context API
-            </CustomLink>
-          </li>
-          <li>
-            Accessible and animatable modals via @reach/dialog
-            <div className="flex flex-row gap-3 flex-wrap my-2">
-              <CustomButton onClick={openConfirmation}>
-                show example modal 1
-              </CustomButton>
-              <CustomButton onClick={openNotification}>
-                show example modal 2
-              </CustomButton>
-            </div>
-          </li>
-          <AnimateSharedLayout>
-            <motion.li>
-              Animated accessible collapsing content via{' '}
-              <CustomLink href="https://reach.tech/disclosure/">
-                @reach/disclosure
-              </CustomLink>
-              <Collapsible
-                className="my-2"
-                title={isOpen => (
-                  <CustomButton div>
-                    {isOpen ? 'collapse' : 'expand'}
-                  </CustomButton>
-                )}
-              >
-                some hidden content!
-              </Collapsible>
-            </motion.li>
-            <motion.li layout="position">another item</motion.li>
-            <motion.li layout="position">another item</motion.li>
-            <motion.li layout="position">another item</motion.li>
-            <motion.li layout="position">another item</motion.li>
-            <motion.li layout="position">another item</motion.li>
-          </AnimateSharedLayout>
-        </ul>
+        <List
+          animateSharedLayout
+          className="list-disc pl-4 leading-8"
+          data={DATA}
+          itemProps={{ layout: 'position' }}
+          renderItem={datum =>
+            datum.map((data, dataIndex) => {
+              switch (data.type) {
+                case 'link':
+                  return (
+                    <CustomLink key={dataIndex} href={data.data.href}>
+                      {data.data.text}
+                    </CustomLink>
+                  )
+                case 'module':
+                  return <div key={dataIndex}>{modules[data.data]}</div>
+                case 'text':
+                  return <span key={dataIndex}>{data.data}</span>
+              }
+            })
+          }
+        />
       </motion.section>
     </div>
   )
