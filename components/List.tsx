@@ -20,7 +20,7 @@ export type ListProps<D extends any> = {
   itemProps?: MotionProps & { className?: string }
 } & (MotionProps & { className?: string })
 
-function ListNoRef<D extends any>(
+function ListComponent<D extends any>(
   {
     data,
     renderItem,
@@ -32,18 +32,19 @@ function ListNoRef<D extends any>(
   }: ListProps<D>,
   ref: ForwardedRef<HTMLUListElement>
 ) {
-  const items = data.map((item, index) => (
+  let children: React.ReactNode = data.map((item, index) => (
     <motion.li key={keyExtractor(item, index)} {...itemProps}>
       {renderItem(item, index)}
     </motion.li>
   ))
 
-  let children: React.ReactNode = items
   if (animatePresence) {
     if (typeof animatePresence === 'boolean') {
-      children = <AnimatePresence>{items}</AnimatePresence>
+      children = <AnimatePresence>{children}</AnimatePresence>
     } else {
-      children = <AnimatePresence {...animatePresence}>{items}</AnimatePresence>
+      children = (
+        <AnimatePresence {...animatePresence}>{children}</AnimatePresence>
+      )
     }
   }
 
@@ -67,6 +68,6 @@ function ListNoRef<D extends any>(
 }
 
 // type assertion here to account for generic proptypes supplied to ListNoRef
-export const List = forwardRef(ListNoRef) as unknown as <D extends any>(
+export const List = forwardRef(ListComponent) as <D extends any>(
   props: ListProps<D> & { ref?: Ref<HTMLUListElement> }
 ) => JSX.Element
