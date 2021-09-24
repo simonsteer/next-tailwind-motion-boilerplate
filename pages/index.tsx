@@ -1,4 +1,4 @@
-import { AnimateSharedLayout, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useFadeInWhenVisible, useModal } from 'hooks'
 import { Collapsible, List } from 'components'
 
@@ -57,7 +57,7 @@ const DATA: ValueInObject<Datum>[][] = [
         text: 'aspect-ratio plugin',
       },
     },
-    { type: 'text', data: ' plugin included' },
+    { type: 'text', data: ' included' },
   ],
   [
     {
@@ -158,17 +158,6 @@ export default function Home() {
       position: ['center', 'center'],
     })
 
-  const collapsible = (
-    <Collapsible
-      className="my-2"
-      title={isOpen => (
-        <CustomButton div>{isOpen ? 'collapse' : 'expand'}</CustomButton>
-      )}
-    >
-      some hidden content!
-    </Collapsible>
-  )
-
   const modals = (
     <div className="flex flex-row gap-3 flex-wrap my-2">
       <CustomButton onClick={openConfirmation}>
@@ -180,17 +169,27 @@ export default function Home() {
     </div>
   )
 
+  const collapsible = (
+    <Collapsible
+      className="my-2"
+      title={isOpen => (
+        <CustomButton div>{isOpen ? 'collapse' : 'expand'}</CustomButton>
+      )}
+    >
+      some hidden content!
+    </Collapsible>
+  )
+
   const modules = { collapsible, modals }
 
   return (
-    <div className="max-w-screen-md py-20 px-10">
+    <div className="max-w-screen-md mx-auto py-20 px-10 relative overflow-x-hidden">
       <motion.section {...useFadeInWhenVisible()}>
         <h1 className="text-4xl">Welcome to my Next.js boilerplate 🙂</h1>
         <p className="max-w-xl mt-4">
           Common patterns I use when building{' '}
           <CustomLink href="https://nextjs.org/">Next.js</CustomLink>{' '}
           applications, bundled into a template to save myself some time
-          bootstrapping applications and websites.
         </p>
       </motion.section>
       <motion.section {...useFadeInWhenVisible()}>

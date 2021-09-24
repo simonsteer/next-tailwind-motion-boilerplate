@@ -1,5 +1,5 @@
 # Next x Tailwind x Framer Boilerplate
-Common patterns I use when building Next.js applications, bundled into a template to save myself some time when bootstrapping applications and websites ⚙️
+Common patterns I use when building Next.js applications, bundled into a template to save myself some time ⚙️
 
 ## App-wide state
 By default, [the application](pages/_app.tsx) is wrapped with a Context Provider, defined at [hooks/useAppState.tsx](hooks/useAppState.tsx). The default store data that is currently loaded exists solely to handle modals. If you wish to add to the data, update the `AppState` type in [types/app.ts](types/app.ts), then update the `DEFAULT_APP_STATE` constant at the top of [hooks/useAppState.tsx](hooks/useAppState.tsx). To access the data, you can use the `useAppState` hook, which is similar to the `useState` hook, except that it accepts deep partial updates to the store instead of needing to be called with an exact copy of the data structure.
