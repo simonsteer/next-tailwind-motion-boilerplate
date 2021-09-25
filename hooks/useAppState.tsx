@@ -28,19 +28,22 @@ export const AppStateProvider = ({
   initialValue?: Partial<AppState>
 }) => {
   const [store, _update] = useState({ ...DEFAULT_APP_STATE, ...initialValue })
-  const update = useCallback((patch: AppStatePatch) => {
-    const changes = typeof patch === 'function' ? patch(store) : patch
-    const { ...nextState } = u(changes, store)
+  const update = useCallback(
+    (patch: AppStatePatch) => {
+      const changes = typeof patch === 'function' ? patch(store) : patch
+      const { ...nextState } = u(changes, store)
 
-    // we do this imperative mutation here because updeep strips non-serializable values, but we may have a
-    // modal which accepts something like a callback function as one of its props, for example. We apply modal
-    // updates after our call to updeep to ensure such values still get passed to the modal component.
-    if ('modal' in changes) {
-      nextState.modal = changes.modal
-    }
+      // we do this imperative mutation here because updeep strips non-serializable values, but we may have a
+      // modal which accepts something like a callback function as one of its props, for example. We apply modal
+      // updates after our call to updeep to ensure such values still get passed to the modal component.
+      if ('modal' in changes) {
+        nextState.modal = changes.modal
+      }
 
-    _update(nextState)
-  }, [])
+      _update(nextState)
+    },
+    [_update, store]
+  )
 
   return (
     <AppStateContext.Provider value={{ store, update }}>
