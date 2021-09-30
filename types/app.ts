@@ -15,6 +15,8 @@ export type Modal = ValueInObject<
        * values for positioning along the [x-axis, y-axis] of the screen. For example, `['start', 'start']` would result in the alert appearing in the top-left corner.
        */
       position?: [ModalAlignment, ModalAlignment]
+      dismissable?: boolean
+      overlay?: boolean
     }
   }
 >

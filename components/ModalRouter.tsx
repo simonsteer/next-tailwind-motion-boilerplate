@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useClickAway } from 'react-use'
 import classNames from 'classnames'
 import { Modal, ModalAlignment } from 'types'
 import { useSelectAppState, useUpdateAppState } from 'hooks'
@@ -8,7 +9,11 @@ import * as MODALS from './modals'
 
 function ModalComponent({ modal }: { modal: Modal }) {
   const Component = MODALS[modal.name] as any
-  return <Component {...modal.props} />
+  return (
+    <div onClick={e => e.stopPropagation()}>
+      <Component {...modal.props} />
+    </div>
+  )
 }
 
 export function ModalRouter() {
@@ -19,18 +24,18 @@ export function ModalRouter() {
   const [position, setPosition] = useState<[ModalAlignment, ModalAlignment]>()
   const [key, setKey] = useState(0)
 
-  const updatePosition = () =>
-    setPosition(storeModal?.position || ['center', 'center'])
-  const clearPosition = () => setPosition(undefined)
-
   useEffect(() => {
-    if (storeModal === null) return
-
-    if (!position) updatePosition()
-
-    setKey(key + 1)
-    setModal(storeModal)
+    if (storeModal) {
+      if (!position) updatePosition()
+      setKey(key + 1)
+      setModal(storeModal)
+    }
   }, [storeModal])
+
+  const ref = useRef<HTMLDivElement>(null)
+  useClickAway(ref, () => {
+    if (!!storeModal?.dismissable) dismiss()
+  })
 
   function handleExitComplete() {
     if (storeModal === null) {
@@ -40,6 +45,15 @@ export function ModalRouter() {
       updatePosition()
     }
   }
+  function updatePosition() {
+    setPosition(storeModal?.position || ['center', 'center'])
+  }
+  function clearPosition() {
+    setPosition(undefined)
+  }
+  function dismiss() {
+    update({ modal: null })
+  }
 
   return (
     <DialogOverlay
@@ -48,13 +62,25 @@ export function ModalRouter() {
         position && `justify-${position[0]} items-${position[1]}`
       )}
       isOpen={!!modal}
-      onDismiss={() => update({ modal: null })}
+      onDismiss={dismiss}
     >
       <DialogContent
+        onClick={() => {
+          if (!!storeModal?.dismissable) dismiss()
+        }}
         aria-label={modal?.label || 'modal'}
         className="pointer-events-auto overflow-visible"
       >
         <AnimatePresence exitBeforeEnter onExitComplete={handleExitComplete}>
+          {!!storeModal?.overlay && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black"
+              style={{ zIndex: -1 }}
+            />
+          )}
           {!!storeModal && <ModalComponent key={key} modal={modal!} />}
         </AnimatePresence>
       </DialogContent>
