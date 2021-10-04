@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useFadeInWhenVisible, useModal } from 'hooks'
+import { useFadeInWhenVisible, useModal, useCount } from 'hooks'
 import { Collapsible, List } from 'components'
 
 function CustomLink({ children, href }: { children: string; href: string }) {
@@ -134,6 +134,7 @@ const DATA: ValueInObject<Datum>[][] = [
 
 export default function Home() {
   const modal = useModal()
+  const [count, counterMethods] = useCount()
 
   const openNotification = () =>
     modal.open({
@@ -192,6 +193,7 @@ export default function Home() {
           applications, bundled into a template to save myself some time
         </p>
       </motion.section>
+      <button onClick={() => counterMethods.increment()}>+</button>
       <motion.section {...useFadeInWhenVisible()}>
         <h2 className="text-2xl mt-12 mb-4">What's included:</h2>
         <List

@@ -63,8 +63,12 @@ export function useUpdateAppState() {
 }
 
 export function useSelectAppState<ReturnValue extends any>(
-  selector: (state: AppState) => ReturnValue
+  selector: (state: AppState) => ReturnValue,
+  getMemoizationValue = (r => r) as (value: ReturnValue) => any
 ) {
   const [store] = useAppState()
-  return useMemo(() => selector(store), [selector, store])
+  const result = selector(store)
+  const dep = getMemoizationValue(result)
+
+  return useMemo(() => result, [dep])
 }
