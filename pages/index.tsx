@@ -5,7 +5,7 @@ import { Collapsible, List } from 'components'
 function CustomLink({ children, href }: { children: string; href: string }) {
   return (
     <a
-      className="underline hover:bg-black hover:text-white hover:no-underline"
+      className="hover:bg-black hover:text-white underline hover:no-underline"
       href={href}
       target="_blank"
     >
