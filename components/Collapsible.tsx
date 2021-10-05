@@ -136,10 +136,11 @@ function RenderedDisclosure({
         <AnimatePresence onExitComplete={handleExitComplete}>
           {internalIsOpen && (
             <motion.div
+              className="overflow-hidden"
               layout="position"
               animate={{ opacity: 1 }}
               initial={{ opacity: 0 }}
-              exit={{ opacity: 0 }}
+              exit={{ opacity: 0, height: 0 }}
             >
               {children}
             </motion.div>

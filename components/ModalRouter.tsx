@@ -16,6 +16,19 @@ function ModalComponent({ modal }: { modal: Modal }) {
   )
 }
 
+const MODAL_FLEX_MAP = {
+  justify: {
+    center: 'justify-center',
+    start: 'justify-start',
+    end: 'justify-end',
+  },
+  items: {
+    center: 'items-center',
+    start: 'items-start',
+    end: 'items-end',
+  },
+}
+
 export function ModalRouter() {
   const storeModal = useSelectAppState(store => store.modal)
   const update = useUpdateAppState()
@@ -55,16 +68,16 @@ export function ModalRouter() {
     update({ modal: null })
   }
 
-  const positionClassName = position
-    ? `justify-${position[0]} items-${position[1]}`
-    : ''
+  const justification = position?.[0] && MODAL_FLEX_MAP.justify[position[0]]
+  const alignment = position?.[1] && MODAL_FLEX_MAP.justify[position[1]]
 
   return useMemo(
     () => (
       <DialogOverlay
         className={classNames(
-          'fixed inset-0 z-40 pointer-events-none flex',
-          positionClassName
+          'fixed inset-0 z-50 pointer-events-none flex',
+          justification,
+          alignment
         )}
         isOpen={!!modal}
         onDismiss={dismiss}
@@ -91,6 +104,6 @@ export function ModalRouter() {
         </DialogContent>
       </DialogOverlay>
     ),
-    [modal, storeModal, positionClassName]
+    [modal, storeModal, justification, alignment]
   )
 }
