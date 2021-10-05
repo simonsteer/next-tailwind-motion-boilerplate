@@ -10,10 +10,11 @@ import React, { useEffect, useState } from 'react'
 const MotionDisclosurePanel = motion(DisclosurePanel)
 const MotionDisclosureButton = motion(DisclosureButton)
 
-type CollapsibleProps = {
+export type CollapsibleProps = {
   title: React.ReactNode | ((isOpen: boolean) => React.ReactNode)
   open?: boolean
   defaultOpen?: boolean
+  hideOverflow?: boolean
   onChange?(): void
   children: React.ReactNode
   className?: string
@@ -27,6 +28,7 @@ export function Collapsible(props: CollapsibleProps) {
     className,
     title,
     children,
+    hideOverflow,
     ...motionProps
   } = props
   const disclosureProps = {
@@ -35,6 +37,7 @@ export function Collapsible(props: CollapsibleProps) {
     defaultOpen,
     title,
     children,
+    hideOverflow,
   }
 
   const CollapsibleComponent =
@@ -58,6 +61,7 @@ function ControlledCollapsible({
   onChange,
   title,
   children,
+  hideOverflow,
 }: CollapsibleProps) {
   const [isOpen, setIsOpen] = useState(open!)
   const [internalIsOpen, setInternalIsOpen] = useState(open!)
@@ -77,6 +81,7 @@ function ControlledCollapsible({
     handleChange: onChange,
     handleExitComplete,
     title,
+    hideOverflow,
   }
   return <RenderedDisclosure {...props}>{children}</RenderedDisclosure>
 }
@@ -84,6 +89,7 @@ function ControlledCollapsible({
 function SelfContainedCollapsible({
   title,
   children,
+  hideOverflow,
   defaultOpen = false,
 }: CollapsibleProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
@@ -105,6 +111,7 @@ function SelfContainedCollapsible({
     defaultOpen,
     handleChange,
     handleExitComplete,
+    hideOverflow,
     title,
   }
   return <RenderedDisclosure {...props}>{children}</RenderedDisclosure>
@@ -118,9 +125,11 @@ function RenderedDisclosure({
   handleExitComplete,
   children,
   defaultOpen,
+  hideOverflow = false,
 }: {
   isOpen: boolean
   defaultOpen?: boolean
+  hideOverflow?: boolean
   internalIsOpen: boolean
   handleChange?(): void
   handleExitComplete(): void
@@ -129,17 +138,18 @@ function RenderedDisclosure({
 }) {
   return (
     <Disclosure open={isOpen} onChange={handleChange} defaultOpen={defaultOpen}>
-      <MotionDisclosureButton layout="position">
+      <MotionDisclosureButton layout="position" className="w-full">
         {typeof title === 'function' ? title(internalIsOpen) : title}
       </MotionDisclosureButton>
       <MotionDisclosurePanel>
         <AnimatePresence onExitComplete={handleExitComplete}>
           {internalIsOpen && (
             <motion.div
-              className="overflow-hidden"
               layout="position"
-              animate={{ opacity: 1 }}
-              initial={{ opacity: 0 }}
+              className={hideOverflow ? 'overflow-hidden' : undefined}
+              transition={{ ease: 'easeOut' }}
+              animate={{ opacity: 1, height: 'auto' }}
+              initial={{ opacity: 0, height: 0 }}
               exit={{ opacity: 0, height: 0 }}
             >
               {children}
