@@ -69,7 +69,7 @@ export function ModalRouter() {
   }
 
   const justification = position?.[0] && MODAL_FLEX_MAP.justify[position[0]]
-  const alignment = position?.[1] && MODAL_FLEX_MAP.justify[position[1]]
+  const alignment = position?.[1] && MODAL_FLEX_MAP.items[position[1]]
 
   return useMemo(
     () => (
