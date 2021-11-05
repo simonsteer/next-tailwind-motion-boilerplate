@@ -24,7 +24,8 @@
     "react-intersection-observer": "^8.32.0",
     "react-use": "^17.2.4",
     "tailwindcss": "^2.2.7",
-    "updeep": "^1.2.1"
+    "updeep": "^1.2.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/react": "17.0.19",

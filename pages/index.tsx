@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useFadeInWhenVisible, useModal, useCount } from 'hooks'
-import { Collapsible, List } from 'components'
+import { Clip, Collapsible, List } from 'components'
 
 function CustomLink({ children, href }: { children: string; href: string }) {
   return (
@@ -172,7 +172,7 @@ export default function Home() {
 
   const collapsible = (
     <Collapsible
-      className="my-2"
+      className="my-2 max-w-md"
       title={isOpen => (
         <CustomButton div>{isOpen ? 'collapse' : 'expand'}</CustomButton>
       )}
@@ -190,10 +190,9 @@ export default function Home() {
         <p className="max-w-xl mt-4">
           Common patterns I use when building{' '}
           <CustomLink href="https://nextjs.org/">Next.js</CustomLink>{' '}
-          applications, bundled into a template to save myself some time
+          applications, bundled into a template to save myself some time.
         </p>
       </motion.section>
-      <button onClick={() => counterMethods.increment()}>+</button>
       <motion.section {...useFadeInWhenVisible()}>
         <h2 className="text-2xl mt-12 mb-4">What's included:</h2>
         <List
