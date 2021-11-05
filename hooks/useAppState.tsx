@@ -68,7 +68,7 @@ export function useSelectAppState<ReturnValue extends any>(
 ) {
   const [store] = useAppState()
   const result = selector(store)
-  const dep = getMemoizationValue(result)
+  const memoized = getMemoizationValue(result)
 
-  return useMemo(() => result, [dep])
+  return useMemo(() => result, [memoized])
 }
