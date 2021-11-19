@@ -17,7 +17,6 @@ export function Clip({
 }) {
   const clipId = useRef(uuid()).current
   const ref = useRef<SVGSVGElement>(null)
-  console.log(ref)
 
   const clip = useMemo(() => {
     const { children, width = '0', height = '0' } = src.props
