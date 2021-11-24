@@ -6,7 +6,7 @@ import {
   SharedLayoutProps,
   AnimateSharedLayout,
 } from 'framer-motion'
-import { ForwardedRef, forwardRef, Ref } from 'react'
+import { Component, ComponentType, ForwardedRef, forwardRef, Ref } from 'react'
 
 export type ListProps<D extends any> = {
   data: D[]
@@ -17,6 +17,7 @@ export type ListProps<D extends any> = {
   /**
    * props to supply every `motion.li` rendered
    */
+  ItemElement?: ComponentType
   itemProps?:
     | (MotionProps & { className?: string })
     | ((item: D, index: number) => MotionProps & { className?: string })
@@ -30,6 +31,7 @@ function ListComponent<D extends any>(
     animatePresence,
     animateSharedLayout,
     itemProps,
+    ItemElement = motion.li,
     ...motionProps
   }: ListProps<D>,
   ref: ForwardedRef<HTMLUListElement>
@@ -39,9 +41,9 @@ function ListComponent<D extends any>(
       typeof itemProps === 'function' ? itemProps(item, index) : itemProps
 
     return (
-      <motion.li key={keyExtractor(item, index)} {...props}>
+      <ItemElement key={keyExtractor(item, index)} {...props}>
         {renderItem(item, index)}
-      </motion.li>
+      </ItemElement>
     )
   })
 
