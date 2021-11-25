@@ -112,8 +112,8 @@ export function RadialMenu<T extends any>({
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2,
       }
+      prevAnim.current?.stop()
       prevAngle.current = getAngleBetweenPoints(anchor, pan.point)
-      actualRotation.set(actualRotation.get() % 360)
     },
     [shouldRotate]
   )
@@ -131,6 +131,10 @@ export function RadialMenu<T extends any>({
 
       const nextAngle = getAngleBetweenPoints(anchor, pan.point)
       let angleDelta = nextAngle - prevAngle.current
+      // if there is suddenly a very large angle delta, we can assume the
+      // rotation went down from 0 to 360, or up from 360 to 0. In this case,
+      // we need to offset by getting the difference between a full 360°
+      // rotation, and the actual amount that was moved
       if (Math.abs(angleDelta) > 270) {
         if (angleDelta < 0) {
           const diff = (360 + angleDelta) / 2
@@ -170,6 +174,9 @@ export function RadialMenu<T extends any>({
         duration: 1,
         ease: 'easeOut',
         onStop() {
+          actualRotation.set(actualRotation.get() % 360)
+        },
+        onComplete() {
           actualRotation.set(actualRotation.get() % 360)
         },
       })
