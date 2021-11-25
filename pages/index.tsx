@@ -35,7 +35,6 @@ export default function Home() {
 
 function Item({ index }: { index: number }) {
   const color = colors[index % colors.length]
-  console.log('color: ' + color)
   return (
     <p
       className={classNames(

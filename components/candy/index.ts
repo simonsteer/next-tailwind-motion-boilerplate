@@ -1,1 +1,1 @@
-export * from './RadialMenu'
+export * from './RadialMenu/RadialMenu'
