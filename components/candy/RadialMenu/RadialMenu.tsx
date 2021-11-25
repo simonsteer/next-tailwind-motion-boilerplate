@@ -1,4 +1,11 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
+import {
+  PointerEvent,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import {
   animate,
   AnimatePresence,
@@ -6,16 +13,12 @@ import {
   motion,
   MotionStyle,
   MotionValue,
-  PanInfo,
+  PanHandlers,
   useMotionValue,
 } from 'framer-motion'
 import classNames from 'classnames'
 import { RadialMenuItem } from './RadialMenuItem'
-import {
-  getNextRotationFromPanMomentum,
-  getPanRotationValue,
-  getWheelRotationValue,
-} from './utils'
+import { getWheelRotationValue, getAngleBetweenPoints } from './utils'
 
 export function RadialMenu<T extends any>({
   data,
@@ -52,14 +55,9 @@ export function RadialMenu<T extends any>({
    * */
   const shouldRotate = !rotation
 
-  const setRotationAmount = useCallback((value: number) => {
-    prevAnim.current?.stop()
-    actualRotation.set(value % 360)
-  }, [])
-
   useEffect(() => {
     return actualRotation.onChange(val => {
-      onRotationChange?.(val)
+      onRotationChange?.(val % 360)
     })
   }, [onRotationChange])
 
@@ -79,54 +77,13 @@ export function RadialMenu<T extends any>({
         ref.current,
         e
       )
-      setRotationAmount(nextRotationAmount)
+      prevAnim.current?.stop()
+      actualRotation.set(nextRotationAmount % 360)
     }
 
     window.addEventListener('wheel', handleWheel)
     return () => window.removeEventListener('wheel', handleWheel)
   }, [shouldRotate])
-
-  const handlePanStart = useCallback(() => prevAnim.current?.stop(), [])
-  const handlePan = useCallback(
-    (e: MouseEvent | TouchEvent | PointerEvent, pan: PanInfo) => {
-      e.preventDefault()
-      if (!shouldRotate || !ref.current) return
-
-      const nextRotationAmount = getPanRotationValue(
-        actualRotation,
-        ref.current,
-        pan
-      )
-      setRotationAmount(nextRotationAmount)
-    },
-    []
-  )
-  const handlePanEnd = useCallback(
-    (e: MouseEvent | TouchEvent | PointerEvent, pan: PanInfo) => {
-      e.preventDefault()
-      if (!shouldRotate || !ref.current) {
-        return
-      }
-
-      prevAnim.current?.stop()
-      prevAnim.current = animate(
-        actualRotation,
-        getNextRotationFromPanMomentum({
-          currentRotation: actualRotation,
-          element: ref.current,
-          pan,
-        }),
-        {
-          duration: 1,
-          ease: 'easeOut',
-          onStop() {
-            actualRotation.set(actualRotation.get() % 360)
-          },
-        }
-      )
-    },
-    []
-  )
 
   const angle = useMemo(() => 360 / data.length, [data.length])
   const style: MotionStyle = useMemo(
@@ -139,11 +96,93 @@ export function RadialMenu<T extends any>({
     [radius]
   )
 
+  const handlePointerDown = useCallback((e: PointerEvent<HTMLUListElement>) => {
+    e.preventDefault()
+    prevAnim.current?.stop()
+  }, [])
+
+  const prevAngle = useRef<number>(0)
+  const handlePanStart: NonNullable<PanHandlers['onPanStart']> = useCallback(
+    (e, pan) => {
+      e.preventDefault()
+      if (!ref.current || !shouldRotate) return
+
+      const rect = ref.current.getBoundingClientRect()
+      const anchor = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      }
+      prevAngle.current = getAngleBetweenPoints(anchor, pan.point)
+      actualRotation.set(actualRotation.get() % 360)
+    },
+    [shouldRotate]
+  )
+
+  const handlePan: NonNullable<PanHandlers['onPan']> = useCallback(
+    (e, pan) => {
+      e.preventDefault()
+      if (!ref.current || !shouldRotate) return
+
+      const rect = ref.current.getBoundingClientRect()
+      const anchor = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      }
+
+      const nextAngle = getAngleBetweenPoints(anchor, pan.point)
+      let angleDelta = nextAngle - prevAngle.current
+      if (Math.abs(angleDelta) > 270) {
+        if (angleDelta < 0) {
+          const diff = (360 + angleDelta) / 2
+          angleDelta += 360 - diff
+        } else {
+          const diff = (360 - angleDelta) / 2
+          angleDelta -= 360 - diff
+        }
+      }
+
+      prevAngle.current = nextAngle
+      actualRotation.set(actualRotation.get() - angleDelta)
+    },
+    [shouldRotate]
+  )
+
+  const handlePanEnd: NonNullable<PanHandlers['onPanEnd']> = useCallback(
+    (e, pan) => {
+      e.preventDefault()
+      if (!shouldRotate) return
+
+      const velocity = Math.max(
+        Math.abs(pan.velocity.x),
+        Math.abs(pan.velocity.y)
+      )
+
+      const currentRotation = actualRotation.get()
+      const previousRotation = actualRotation.getPrevious()
+
+      const nextRotation =
+        currentRotation > previousRotation
+          ? currentRotation + velocity
+          : currentRotation - velocity
+
+      prevAnim.current?.stop()
+      prevAnim.current = animate(actualRotation, nextRotation, {
+        duration: 1,
+        ease: 'easeOut',
+        onStop() {
+          actualRotation.set(actualRotation.get() % 360)
+        },
+      })
+    },
+    [shouldRotate]
+  )
+
   return (
     <motion.ul
       ref={ref}
       className={classNames(className, 'relative')}
       style={style}
+      onPointerDown={handlePointerDown}
       onPanStart={handlePanStart}
       onPan={handlePan}
       onPanEnd={handlePanEnd}

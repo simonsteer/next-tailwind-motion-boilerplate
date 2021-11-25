@@ -1,11 +1,5 @@
 import classNames from 'classnames'
-import { RadialMenu } from 'components/candy'
-import {
-  animate,
-  AnimationPlaybackControls,
-  useMotionValue,
-} from 'framer-motion'
-import { useEffectOnce } from 'react-use'
+import { RadialMenu } from 'components/candy/RadialMenu'
 
 const colors = [
   'bg-yellow-200',
