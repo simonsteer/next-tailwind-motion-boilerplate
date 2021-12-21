@@ -1,6 +1,7 @@
 import { memo, ReactNode, useEffect, useRef } from 'react'
 import { motion, MotionValue, useMotionValue } from 'framer-motion'
 import { getItemPosition } from './utils'
+import { useMeasure } from 'react-use'
 
 export const RadialMenuItem = memo(function ({
   index,
@@ -19,32 +20,34 @@ export const RadialMenuItem = memo(function ({
   const left = useMotionValue(0)
   const top = useMotionValue(0)
 
-  const ref = useRef<HTMLLIElement>(null)
+  const [ref, dimensions] = useMeasure<HTMLLIElement>()
 
   useEffect(() => {
     const position = getItemPosition({
       rotationAmount: rotation.get(),
       radius,
-      ref,
+      dimensions,
       index,
       angle,
     })
     top.set(position.top)
     left.set(position.left)
-  }, [ref.current, radius])
+  }, [dimensions.width, dimensions.height, radius])
 
-  useEffect(() =>
-    rotation.onChange(amount => {
-      const position = getItemPosition({
-        rotationAmount: amount,
-        radius,
-        ref,
-        index,
-        angle,
-      })
-      top.set(position.top)
-      left.set(position.left)
-    })
+  useEffect(
+    () =>
+      rotation.onChange(amount => {
+        const position = getItemPosition({
+          rotationAmount: amount,
+          radius,
+          dimensions,
+          index,
+          angle,
+        })
+        top.set(position.top)
+        left.set(position.left)
+      }),
+    [dimensions.width, dimensions.height, radius]
   )
 
   return (

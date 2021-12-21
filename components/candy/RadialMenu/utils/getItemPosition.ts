@@ -1,21 +1,16 @@
-import { RefObject } from 'react'
-
 export function getItemPosition({
   rotationAmount,
   angle,
   index,
   radius,
-  ref,
+  dimensions: { width, height },
 }: {
   rotationAmount: number
   angle: number
   index: number
   radius: number
-  ref: RefObject<HTMLLIElement>
+  dimensions: { width: number; height: number }
 }) {
-  const width = ref.current?.clientWidth || 0
-  const height = ref.current?.clientHeight || 0
-
   let theta = (angle / 180) * index
   theta += rotationAmount / 180
   theta *= Math.PI
