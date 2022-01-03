@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useFadeInWhenVisible, useModal, useCount } from 'hooks'
-import { Clip, Collapsible, List } from 'components'
+import { Collapsible, List } from 'components'
 
 function CustomLink({ children, href }: { children: string; href: string }) {
   return (
